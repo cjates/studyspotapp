@@ -43,6 +43,21 @@ if (isSupabaseConfigured) {
  *   unique (user_id, spot_id)
  * );
  * 
+ * -- Create Suggested Spots Table
+ * create table public.suggested_spots (
+ *   id uuid default gen_random_uuid() primary key,
+ *   name text not null,
+ *   building text not null,
+ *   description text not null,
+ *   quiet_level text not null,
+ *   outlets text not null,
+ *   wifi_quality text not null,
+ *   open_late boolean not null,
+ *   food_nearby boolean not null,
+ *   user_email text not null,
+ *   created_at timestamp with time zone default timezone('utc'::text, now()) not null
+ * );
+ * 
  * -- Enable Row Level Security (RLS) or add standard policies as required.
  */
 
