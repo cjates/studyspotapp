@@ -158,6 +158,13 @@ export const SpotCard: React.FC<SpotCardProps> = ({
             <Heart className={`w-5 h-5 ${isFavorite ? 'fill-rose-500' : 'text-slate-600'}`} />
           </button>
 
+          {spot.id.startsWith('sug-') && (
+            <div className="absolute top-3 left-3 z-10 bg-emerald-800 text-emerald-50 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border border-emerald-700/80 shadow-md flex items-center gap-1">
+              <span>🌟</span>
+              <span>Student Suggestion</span>
+            </div>
+          )}
+
           {/* Building Overlay */}
           <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end">
             <div>

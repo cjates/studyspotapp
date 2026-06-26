@@ -68,6 +68,28 @@ export default function App() {
         // Load reviews
         const allReviews = await studySpotService.getReviews();
         setReviews(allReviews);
+
+        // Load suggested spots
+        const suggested = await studySpotService.getSuggestedSpots();
+        const mappedSuggested: StudySpot[] = suggested.map((s, index) => ({
+          id: s.id || `sug-${index}`,
+          name: s.name,
+          building: s.building,
+          description: s.description,
+          quietLevel: s.quietLevel,
+          outlets: s.outlets,
+          wifiQuality: s.wifiQuality,
+          openLate: s.openLate,
+          foodNearby: s.foodNearby,
+          hours: "Hours vary",
+          locationDetails: `Community Suggested by ${s.user_email}`,
+          lat: 29.9353 + ((index + 1) * 0.0003) % 0.001 - 0.0005,
+          lng: -90.1218 + ((index + 1) * 0.0004) % 0.001 - 0.0005,
+          tags: ["Suggested", s.building],
+          imageUrl: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80"
+        }));
+
+        setSpots([...INITIAL_SPOTS, ...mappedSuggested]);
       } catch (err) {
         console.error('Error loading initial databases keys or sessions:', err);
       }
@@ -104,7 +126,32 @@ export default function App() {
 
   // Suggest a spot submit handler
   const handleSuggestSpotSubmit = async (newSpot: Omit<SuggestedSpot, 'id' | 'created_at'>) => {
-    await studySpotService.suggestSpot(newSpot);
+    try {
+      const savedSpot = await studySpotService.suggestSpot(newSpot);
+      
+      const mapped: StudySpot = {
+        id: savedSpot.id || `sug-${Date.now()}`,
+        name: savedSpot.name,
+        building: savedSpot.building,
+        description: savedSpot.description,
+        quietLevel: savedSpot.quietLevel,
+        outlets: savedSpot.outlets,
+        wifiQuality: savedSpot.wifiQuality,
+        openLate: savedSpot.openLate,
+        foodNearby: savedSpot.foodNearby,
+        hours: "Hours vary",
+        locationDetails: `Community Suggested by ${savedSpot.user_email}`,
+        lat: 29.9353 + (Math.random() * 0.0006) - 0.0003,
+        lng: -90.1218 + (Math.random() * 0.0006) - 0.0003,
+        tags: ["Suggested", savedSpot.building],
+        imageUrl: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80"
+      };
+
+      setSpots(prev => [...prev, mapped]);
+    } catch (err) {
+      console.error('Failed to submit spot suggestion:', err);
+      throw err;
+    }
   };
 
   // Favorite toggle action

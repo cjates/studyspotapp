@@ -345,6 +345,35 @@ export const studySpotService = {
   },
 
   // --- SUGGEST SPOT SECTOR ---
+  getSuggestedSpots: async (): Promise<SuggestedSpot[]> => {
+    if (isSupabaseConfigured && realSupabaseClient) {
+      const { data, error } = await realSupabaseClient
+        .from('suggested_spots')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        return data.map(d => ({
+          id: d.id,
+          name: d.name,
+          building: d.building,
+          description: d.description,
+          quietLevel: d.quiet_level,
+          outlets: d.outlets,
+          wifiQuality: d.wifi_quality,
+          openLate: d.open_late,
+          foodNearby: d.food_nearby,
+          user_email: d.user_email,
+          created_at: d.created_at
+        }));
+      }
+      console.error('Supabase query error for suggested spots:', error);
+    }
+
+    const local = localStorage.getItem('study_spot_suggested_v1');
+    return local ? JSON.parse(local) : [];
+  },
+
   suggestSpot: async (spot: Omit<SuggestedSpot, 'id' | 'created_at'>): Promise<SuggestedSpot> => {
     const newSpot: SuggestedSpot = {
       ...spot,
