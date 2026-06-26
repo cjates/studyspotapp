@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StudySpot, Review, Favorite, Filters, UserProfile, SuggestedSpot } from './types';
 import { INITIAL_SPOTS } from './data/initialSpots';
-import { studySpotService, isSupabaseConfigured } from './supabaseClient';
+import { studySpotService, isSupabaseConfigured, initializeSupabase } from './supabaseClient';
 import { InteractiveMap } from './components/InteractiveMap';
 import { SpotCard } from './components/SpotCard';
 import { FilterBar } from './components/FilterBar';
@@ -41,7 +41,7 @@ export default function App() {
   const [selectedSpot, setSelectedSpot] = useState<StudySpot | null>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [mapExpanded, setMapExpanded] = useState(true);
-  const [showDbInfo, setShowDbInfo] = useState(!isSupabaseConfigured);
+  const [isSupabaseActive, setIsSupabaseActive] = useState(false);
 
   // Filter Engine state
   const [filters, setFilters] = useState<Filters>({
@@ -57,6 +57,9 @@ export default function App() {
   useEffect(() => {
     async function loadInitialData() {
       try {
+        const active = await initializeSupabase();
+        setIsSupabaseActive(active);
+
         const user = await studySpotService.getCurrentUser();
         if (user) {
           setCurrentUser(user);
@@ -459,7 +462,7 @@ export default function App() {
                   setSelectedSpot(null);
                   setShowAuthModal(true);
                 }}
-                isSupabaseActive={isSupabaseConfigured}
+                isSupabaseActive={isSupabaseActive}
               />
             </motion.div>
           </div>
@@ -483,7 +486,7 @@ export default function App() {
           <AuthModal
             onClose={() => setShowAuthModal(false)}
             onSuccess={handleAuthSuccess}
-            isSupabaseActive={isSupabaseConfigured}
+            isSupabaseActive={isSupabaseActive}
             onSendOtp={handleSendOtp}
             onVerifyOtp={handleVerifyOtp}
           />

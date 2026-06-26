@@ -2,20 +2,44 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { StudySpot, Review, Favorite, SuggestedSpot, UserProfile } from './types';
 import { INITIAL_SPOTS } from './data/initialSpots';
 
-// Retrieve environment credentials - securely fetched from environment variable mappings
-const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY || '';
+export let isSupabaseConfigured = false;
+export let realSupabaseClient: SupabaseClient | null = null;
 
-// Detect if real Supabase credentials are provided
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+export async function initializeSupabase(): Promise<boolean> {
+  // First, check if Vite has baked-in environment variables (e.g. from local development .env)
+  let url = (import.meta as any).env.VITE_SUPABASE_URL || '';
+  let anonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY || '';
 
-let realSupabaseClient: SupabaseClient | null = null;
-if (isSupabaseConfigured) {
-  try {
-    realSupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-  } catch (error) {
-    console.error('Failed to initialize real Supabase client:', error);
+  if (!url || !anonKey) {
+    try {
+      console.log('Vite env variables not baked in. Fetching live Supabase credentials from backend /api/config...');
+      const res = await fetch('/api/config');
+      if (res.ok) {
+        const config = await res.json();
+        url = config.supabaseUrl || '';
+        anonKey = config.supabaseAnonKey || '';
+      }
+    } catch (err) {
+      console.warn('Could not fetch Supabase configuration from Express backend:', err);
+    }
   }
+
+  if (url && anonKey) {
+    try {
+      realSupabaseClient = createClient(url, anonKey);
+      isSupabaseConfigured = true;
+      console.log('Supabase client successfully initialized for project:', url);
+      return true;
+    } catch (error) {
+      console.error('Failed to create Supabase client:', error);
+    }
+  } else {
+    console.warn('No active Supabase configuration detected. Running in offline localStorage fallback mode.');
+  }
+
+  isSupabaseConfigured = false;
+  realSupabaseClient = null;
+  return false;
 }
 
 /**

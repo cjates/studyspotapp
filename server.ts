@@ -57,6 +57,14 @@ async function generateWithFallback(ai: GoogleGenAI, prompt: string): Promise<st
   throw lastError || new Error("Failed to generate content with all available models.");
 }
 
+// API route to get Supabase config at runtime
+app.get("/api/config", (req, res) => {
+  res.json({
+    supabaseUrl: process.env.VITE_SUPABASE_URL || "",
+    supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY || ""
+  });
+});
+
 // API route for Gemini study spot reviews summarization
 app.post("/api/gemini/summarize", async (req, res) => {
   const { spotName, reviews } = req.body;
