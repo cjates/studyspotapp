@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Helper function to handle model generation with retries and fallbacks
 async function generateWithFallback(ai: GoogleGenAI, prompt: string): Promise<string> {
-  const modelsToTry = ["gemini-3.5-flash", "gemini-3.1-flash-lite"];
+  const modelsToTry = ["gemini-3.5-flash", "gemini-flash-latest", "gemini-3.1-flash-lite"];
   let lastError: any = null;
 
   for (const model of modelsToTry) {
