@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Tulane Study Spot Finder",
+  "description": "An interactive study spots finder for Tulane University students to discover, filter, review, and save their favorite study spots on campus with live map exploration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
