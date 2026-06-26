@@ -267,7 +267,10 @@ export const studySpotService = {
       if (!error && data && data[0]) {
         return data[0] as Review;
       }
-      console.error('Supabase review insertion failed, saving locally:', error);
+      console.error('Supabase review insertion failed:', error);
+      if (error) {
+        throw new Error(`Supabase Review Insertion Failed: ${error.message || JSON.stringify(error)}`);
+      }
     }
 
     // Fallback
@@ -381,7 +384,10 @@ export const studySpotService = {
           created_at: d.created_at
         };
       }
-      console.error('Supabase spot suggestion insertion failed, saving locally:', error);
+      console.error('Supabase spot suggestion insertion failed:', error);
+      if (error) {
+        throw new Error(`Supabase Suggest Spot Failed: ${error.message || JSON.stringify(error)}`);
+      }
     }
 
     // Fallback LocalStorage
