@@ -29,9 +29,9 @@ The Tulane Study Spot Finder is an interactive, full-stack web application desig
 ## 🚀 Environment Variables
 
 ```env
-# Supabase Credentials
-VITE_SUPABASE_URL="https://pvyqtinbbncoybsggrqq.supabase.co"
-VITE_SUPABASE_ANON_KEY="sb_publishable_yAdzL2AvhnYoPeRtdJpQ8Q_hERS-WTc"
+# Optional: Real Supabase Credentials (defaults to safe, secure client-side storage if omitted)
+# VITE_SUPABASE_URL="your-supabase-project-url"
+# VITE_SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
 
 ---

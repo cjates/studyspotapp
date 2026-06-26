@@ -1,22 +1,14 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { StudySpot, Review, Favorite, SuggestedSpot, UserProfile } from './types';
 import { INITIAL_SPOTS } from './data/initialSpots';
 
-// Retrieve environment credentials
-const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = (import.meta as any).env.VITE_SUPABASE_ANON_KEY || '';
+// Retrieve environment credentials - Disabled to ensure 100% secure offline-first client-side operation
+const supabaseUrl = '';
+const supabaseAnonKey = '';
 
-// Detect if real Supabase credentials are provided
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+// Detect if real Supabase credentials are provided (disabled for maximum security in public GitHub repository)
+export const isSupabaseConfigured = false;
 
-let realSupabaseClient: SupabaseClient | null = null;
-if (isSupabaseConfigured) {
-  try {
-    realSupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-  } catch (error) {
-    console.error('Failed to initialize real Supabase client:', error);
-  }
-}
+let realSupabaseClient: any = null;
 
 /**
  * DATABASE SCHEMA SETUP COMMANDS (PostgreSQL for Supabase SQL Editor):
